@@ -23,6 +23,7 @@ int find_similarity(char *input_string,char *suffix_string)
     return res;
 }
 
+
 int main()
 {
 	int t;
