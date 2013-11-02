@@ -32,14 +32,9 @@ int main()
                      if(isalnum(input[j][pos+1])||input[j][pos+1]=='_')
                      	 prob=1;
 		  	 	}
-		  	 	else if (pos==input[j].length()-1)
-		  	 	{
-                    if(isalnum(input[j][pos-1])||input[j][pos-1]=='_')
-                    	prob=1;
-		  	 	}
 		  	 	else
 		  	 	{
-                    if((isalnum(input[j][pos+1]||input[j][pos+1]=='_'))||(isalnum(input[j][pos-1])||input[j][pos-1]=='_'))
+                    if(isalnum(input[j][pos+1])||(input[j][pos+1]=='_')||isalnum(input[j][pos-1])||(input[j][pos-1]=='_'))
                     	prob=1;
 		  	 	}
 		  	 	if(prob==0)
