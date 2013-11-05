@@ -24,6 +24,38 @@ struct linked_list
     }
 };
 
+
+
+node* InsertNth(node *&head, int data, int position)
+{
+  // Complete this method only
+  // Do not write main function. 
+  node* p=new node(data);
+  p->data=data;
+  p->next=NULL;
+    
+  if(position==0)
+  {
+     p->next=head;
+     head=p;
+     return head;
+  }
+  node* temp=head;
+  node* store_next=head->next;
+  while(position>1)
+  {
+      temp=temp->next;
+      if(temp->next==NULL)
+          store_next=NULL;
+      else
+          store_next=temp->next;
+      position--;
+  }
+   (*temp).next=p;
+    p->next=store_next;
+   return head;
+}
+
 void insert(linked_list &l,int x)
 {
 	 node* p=new node(x);
@@ -93,7 +125,7 @@ int main()
     for(i=0;i<6;i++)
       insert(l,a[i]);
     int k=3;
-    reverse_link(l,k,l.head);
+    InsertNth(l.head,7,6);
     display(l);
     return 0;
 }
