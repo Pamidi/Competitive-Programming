@@ -117,6 +117,25 @@ void reverse_link(linked_list &l,int k,node* &start)
 
 }
 
+void reverse(node* &head)
+{
+  if(head==NULL)
+    return;
+  if(head->next==NULL)
+    return;
+  node* prev=NULL;
+  node* next_node=head;
+  while(next_node!=NULL)
+  {
+    node* temp_store=next_node->next;
+    (*next_node).next=prev;                //point back
+    prev=next_node;
+    next_node=temp_store;
+  }
+  head=prev;
+
+}
+
 int main()
 {
 	linked_list l;
@@ -124,8 +143,7 @@ int main()
     int i;
     for(i=0;i<6;i++)
       insert(l,a[i]);
-    int k=3;
-    InsertNth(l.head,7,6);
+    reverse(l.head);
     display(l);
     return 0;
 }
