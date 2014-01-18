@@ -2,9 +2,7 @@
 using namespace std;
 #include <cstdlib>
 #include <vector>
-#include <string>
 #include <algorithm>
-#include <cmath>
 
 int main()
 {
@@ -17,11 +15,11 @@ int main()
 		vector<int> w(n);
 		for(int i=0;i<n;i++)
 			cin>>w[i];
-		sort(w.begin(),w.end());
-	    int diff=0;
-	    if(n==1)
-	    	cout<<"1"<<diff<<endl;
-	    
-
+		int ans=0;
+		int min=*min_element(w.begin(),w.end());
+		for(int i=0;i<n;i++)
+			ans+=w[i]-min;
+		cout<<ans<<endl;
 	}
+	return 0;
 }
