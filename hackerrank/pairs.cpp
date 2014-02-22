@@ -18,27 +18,35 @@
 #include <unordered_map>
 using namespace std;
 /* Head ends here */
-int lonelyinteger(vector < int > a) 
-{
-    unordered_map<int,int> int_map;
-    for(int i=0;i<=100;i++)
-        int_map[i]=0;
-   for(int i=0;i<a.size();i++)
-   {
-      int_map[a[i]]++;
-   }
-   for(int i=0;i<=100;i++)
-     if(int_map[i]==1)
-        return i;
-   return 0; 
 
+int pairs(vector < int > a,int k) {
+   int ans=0;
+   unordered_map<int,int> my_map;
+    sort(a.begin(),a.end());
+
+    for(int i=1;i<=t;i++)
+        my_map[i]=0;
+    for(int i=0;i<a.size();i++)
+    {
+       my_map[a[i]]++;
+    }
+    for(int i=0;i<a.size();i++)
+    {
+        if((a[i]-k>=1)&&my_map[a[i]-k]>0)
+            ans++;
+        if((a[i]+k<=t)&&my_map[a[i]+k]>0)
+            ans++;
+    }
+
+    return ans/2;
 }
+
 /* Tail starts here */
 int main() {
     int res;
     
-    int _a_size;
-    cin >> _a_size;
+    int _a_size,_k;
+    cin >> _a_size>>_k;
     cin.ignore (std::numeric_limits<std::streamsize>::max(), '\n'); 
     vector<int> _a;
     int _a_item;
@@ -47,7 +55,7 @@ int main() {
         _a.push_back(_a_item);
     }
     
-    res = lonelyinteger(_a);
+    res = pairs(_a,_k);
     cout << res;
     
     return 0;
