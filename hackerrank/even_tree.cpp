@@ -1,108 +1,98 @@
 #include <iostream>
 using namespace std;
-#include <cstdlib>
-#include <vector>
 #include <algorithm>
-
-struct node
-{
-	int children;
-	bool visited;
-	node()
-	{
-		children=0;
-		visited=false;
-	}
-};
+#include <vector>
+#include <list>
+#include <cstdlib>
 
 struct graph
 {
-    int v;           				//number of vertices
-    int e;							//number of edges
-    vector<node> vertex;            //all vertex
-    vector<int> *adj;	    //adjacency matrix 
-    graph(int d,int k)
-    {
-         v=d;
-         e=k;
-         adj=new vector<int>[v];
-         vertex.reserve(v);
-         for(int i=0;i<v;i++)
-         {
-         	vertex[i].children=0;   //setting children to 0 initially
-         	vertex[i].visited=false;
-         }
+	int n;
+	int m;
+	vector<list<int> > adj;
+
+	graph(int v,int e)
+	{
+       n=v;
+       m=e; 
+       adj.resize(v+1);     
     }
-    void addEdge(int u,int v)      //add an edge (u,v) and (v,u)
+
+	void add_edge(int u,int v)
+	{
+      adj[u].push_front(v);
+      adj[v].push_front(u);
+	}
+
+    void display_adj_list()
     {
-         adj[u-1].push_back(v-1);
-         adj[v-1].push_back(u-1);
+        for(int i=1;i<=n;i++)
+        {
+            cout<<"VERTEX "<<i<<" :";
+            for(list<int>::iterator it=adj[i].begin();it!=adj[i].end();++it)
+                cout<<*it<<" ";
+            cout<<endl;
+        }
     }
 };
 
-int find_connected_members(graph &g,int s)  //find children for vertex s
+int calculate_children_nodes(graph &G,int u,vector<int> &children,vector<int> &visited)
 {
-    g.vertex[s].children+=1;                 //adding the source vertex also
-    g.vertex[s].visited=true;
-	//cout<<"at vertex:"<<s<<endl;
-	for(int i=0;i<g.adj[s].size();i++)
-	{
-	//	cout<<"considering neighbour "<<g.adj[s][i]<<endl;
-		if(!g.vertex[g.adj[s][i]].visited) //for each edge (s,i) and i not visited before
-		{
-	//		cout<<"calling function with neighbour"<<g.adj[s][i]<<endl;
-			g.vertex[s].children+=find_connected_members(g,g.adj[s][i]);
-		}
-	}
-	//cout<<" vertex "<<s<<" : "<<g.vertex[s].children<<endl;
-	return g.vertex[s].children;
+    children[u]=1;
+    visited[u]=1;
+    for(list<int>::iterator it=G.adj[u].begin();it!=G.adj[u].end();++it)
+    {
+        if(visited[*it]==1)
+              continue;
+     	children[u]+=calculate_children_nodes(G,*it,children,visited);
+    }
+    return children[u];
 }
 
-int start_breaking_at(graph &g,int s)
+int recurse_remove_edges(graph &G,int u,vector<int> &children,vector<int> &visited)
 {
-   if(g.vertex[s].children%2==1)    //cant be broken further
-      return 0;
-   int tot_break=0;
-   int k=g.adj[s].size();
-   int count=0;
-   for(int i=0;i<k;i++)
-   {
-   	   int neighbour=g.adj[s][count];
-       if(g.vertex[neighbour].children%2==0)
-       {
-         //remove element
-         auto it=find(g.adj[s].begin(),g.adj[s].end(),neighbour);
-       	 g.adj[s].erase(it);
-       	 it=find(g.adj[neighbour].begin(),g.adj[neighbour].end(),s);
-       	 g.adj[neighbour].erase(it);
-       	 tot_break++;
-       	 tot_break+=start_breaking_at(g,neighbour);
-       }
-       else
-       	count++;
-   }
-  return tot_break;
+	visited[u]=1;
+	int ans=0;
+    //cout<<endl<<"for vertex :"<<u;
+    for(list<int>::iterator it=G.adj[u].begin();it!=G.adj[u].end();++it)
+    {
+           if(visited[*it]==1)
+               continue;
+    	   if(children[*it]%2==0)
+    	   	    ans+=1+recurse_remove_edges(G,*it,children,visited);
+           else
+                ans+=recurse_remove_edges(G,*it,children,visited);
+    }
+    //cout<<"splitting :"<<ans<<" edges for vertex :"<<u<<endl;
+    return ans;
 }
 
-int make_max_connected_components(graph &g)
+int remove_edges_form_forest(graph &G)
 {
-     int c=find_connected_members(g,0);
-  //   cout<<c<<endl;
-     if(c%2==1)                              //cant break further
-     	return 0; 
-     return start_breaking_at(g,0);
+	if(G.n==0)
+		 return -1;
+	vector<int> children(G.n+1);
+    vector<int> child_visited(G.n+1);
+    vector<int> edge_visited(G.n+1);
+    int k=calculate_children_nodes(G,1,children,child_visited);   
+    return recurse_remove_edges(G,1,children,edge_visited);
 }
 
 int main()
 {
-    int n,m;
+	int n,m;
+	n=30;
+   // int u[]={2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30};
+  //  int v[]={1,2,3,2,4,4,1,5,4,4,8,2,2,8,10,1,17,18,4,15,20,2,12,21,17,5,27,4,25};
+
+    //m=sizeof(u)/sizeof(u[0]);
     cin>>n>>m;
-    graph g(n,m);
+    graph G(n,m);
     for(int i=0;i<m;i++)
     {
-       int u,v;
-       cin>>u>>v;
-       g.addEdge(u,v);
+    	int u,v;
+    	cin>>u>>v;
+        G.add_edge(u,v);
     }
-    cout<<make_max_connected_components(g)<<endl;
+    cout<<remove_edges_form_forest(G);	
 }

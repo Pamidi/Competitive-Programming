@@ -2,76 +2,38 @@
 using namespace std;
 #include <vector>
 #include <algorithm>
+#include <limits.h>
 #include <string>
 #include <unordered_map>
 
-bool ispal(string s)
+//number of anagrams which are palindromes %10^9+7
+typedef long long int lli;
+const lli mod=1000000007;
+
+lli comb(long n,long r)
 {
-   int i;
-   for(i=0;i<(s.length()/2);i++)
-      if(s[i]!=s[s.length()-1-i])
-         break;
-   if(i==s.length()/2)
-   return true;
+	//for finding nCr
 
-   return false;   
 }
-
 int main()
 {
    string s;
-   string alphabets="abcdefghijklmnopqrstuvwxyz";
    getline(cin,s);
+   long k=s.length();
+   unordered_map<char,long> hash;
+   	  hash[s[i]]++;
 
-   unordered_map<char,int> hash_map(s.length()); 
-   int i;
-   for(i=0;i<26;i++)
-     hash_map[alphabets[i]]=0;	 
-   
-   for(i=0;i<s.length();i++)
+   long spots=k/2;
+   lli ang=1;
+   bool odd_flag=k%2==0?false:true;
+   for(int i=0;i<26;i++)
    {
-   	  hash_map[s[i]]++;
+   	  char c=97+i;
+   	  if(odd_flag&&hash[c]%2==1)
+   	  	 continue;
+   	  long m=hash[c]/2;
+   	  ang*=(comb(spots,m)%mod;             //find combinations of putting it..
+   	  spots-=m;
    }
-
-   int odd_count=0;
-
-   for(i=0;i<26;i++)
-   {
-   	if(hash_map[alphabets[i]]%2==1)
-   		odd_count++;
-   }
-   if((s.length()%2==0)&&odd_count!=0)
-   	cout<<"0";
-   else if((s.length()%2==1)&&odd_count!=1)
-   	cout<<"0";
-   else
-   	{
-         int count=0;
-         vector<int> index;
-         int j;
-         for(j=0;j<s.length();j++)
-             index.push_back(j);
-
-         unordered_map<string,int> permut;
-
-         do
-         {
-           
-            string temp="";
-            for(j=0;j<s.length();j++)
-               temp+=s[index[j]];       //make a string of this combinaton
-                  
-            if(permut.find(temp)==permut.end())     
-            {
-            permut[temp]=1;
-            if(ispal(temp))
-                  count++;              
-               
-            }
-         }while(next_permutation(index.begin(),index.end()));
-        cout<<count<<endl;
-      }
-
-   return 0;
-
+   cout<<ang<<endl;
 }
